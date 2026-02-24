@@ -1,0 +1,135 @@
+services:
+  zookeeper_cybertron:
+    image: docker.arvancloud.ir/confluentinc/cp-zookeeper:7.9.0
+    container_name: zookeeper_cybertron
+    ulimits:
+      nofile:
+        soft: 65536
+        hard: 65536
+    deploy:
+      resources:
+        limits:
+          memory: 2G
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+    ports:
+      - "2181:2181"
+    networks:
+      appnet:
+        ipv4_address: "${ZOOKEEPER_IP:-172.20.20.171}"
+
+  kafka:
+    image: docker.arvancloud.ir/confluentinc/cp-kafka:7.9.0
+    container_name: kafka
+    ulimits:
+      nofile:
+        soft: 65536
+        hard: 65536
+    deploy:
+      resources:
+        limits:
+          memory: 2G
+    depends_on:
+      - zookeeper_cybertron
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper_cybertron:2181
+      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092,EXTERNAL://0.0.0.0:9093
+      KAFKA_ADVERTISED_LISTENERS: "PLAINTEXT://kafka:9092,EXTERNAL://${EXTERNAL_ADDR:-localhost}:9093"
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,EXTERNAL:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_REPLICA_FETCH_MAX_BYTES: 10048576
+      KAFKA_LOG_RETENTION_MS: 86400000
+      KAFKA_MESSAGE_MAX_BYTES: 8388608
+      KAFKA_MAX_REQUEST_SIZE: 8388608
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: "1"
+    ports:
+      - "9092:9092"
+      - "9093:9093"
+    networks:
+      appnet:
+        ipv4_address: "${KAFKA_IP:-172.20.20.172}"
+
+  kafka_connect:
+    image: docker.arvancloud.ir/confluentinc/cp-kafka-connect:7.9.0
+    container_name: kafka_connect
+    depends_on:
+      - kafka
+    ulimits:
+      nofile:
+        soft: 65536
+        hard: 65536
+    deploy:
+      resources:
+        limits:
+          memory: 2G
+    volumes:
+      - ./data/kafka-connect/debezium-connector-mysql:/usr/share/java/debezium-connector-mysql
+      - ./data/kafka-connect/mongodb-sink:/usr/share/java/mongodb-sink
+    environment:
+      CONNECT_BOOTSTRAP_SERVERS: kafka:9092
+      CONNECT_REST_PORT: 8083
+      CONNECT_GROUP_ID: "connect-cluster"
+      CONNECT_CONFIG_STORAGE_TOPIC: "connect-configs"
+      CONNECT_OFFSET_STORAGE_TOPIC: "connect-offsets"
+      CONNECT_STATUS_STORAGE_TOPIC: "connect-status"
+      CONNECT_KEY_CONVERTER: "org.apache.kafka.connect.json.JsonConverter"
+      CONNECT_VALUE_CONVERTER: "org.apache.kafka.connect.json.JsonConverter"
+      CONNECT_INTERNAL_KEY_CONVERTER: "org.apache.kafka.connect.json.JsonConverter"
+      CONNECT_INTERNAL_VALUE_CONVERTER: "org.apache.kafka.connect.json.JsonConverter"
+      CONNECT_REST_ADVERTISED_HOST_NAME: kafka_connect
+      CONNECT_PLUGIN_PATH: /usr/share/java
+      CONNECT_OFFSET_STORAGE_REPLICATION_FACTOR: "1"
+      CONNECT_CONFIG_STORAGE_REPLICATION_FACTOR: "1"
+      CONNECT_STATUS_STORAGE_REPLICATION_FACTOR: "1"
+      CONNECT_PRODUCER_MAX_REQUEST_SIZE: "20971520"
+      CONNECT_RETRY_BACKOFF_MS: 3000
+      CONNECT_RETRY_BACKOFF_MAX_MS: 10000
+      CONNECT_RECONNECT_BACKOFF_MS: 1000
+      CONNECT_RECONNECT_BACKOFF_MAX_MS: 10000
+    ports:
+      - "8083:8083"
+    networks:
+      appnet:
+        ipv4_address: "${KCONNECT_IP:-172.20.20.173}"
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8083/connectors" ]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  megatron:
+    build:
+      context: ../docker/node
+      dockerfile: Dockerfile
+    container_name: megatron
+    depends_on:
+      - kafka
+    volumes:
+      - ../code:/opt
+    working_dir: /opt/megatron
+    environment:
+      - PORT=9000
+      - NODE_ENV=development
+      - NPM_CONFIG_PRODUCTION=false
+    # 1) install deps (ci if lock exists, otherwise install)
+    # 2) remove accidental 'nest' pkg if present (prevents .bin shadow)
+    # 3) install needed dev runtime tools without saving
+    # 4) run the real CLI path (bypass .bin)
+    command: >
+      sh -c "
+        ( [ -f package-lock.json ] && npm ci || npm install ) &&
+        ( npm remove -y nest || true ) &&
+        npm i --no-save @nestjs/cli@^10 ts-node tsconfig-paths &&
+        node node_modules/@nestjs/cli/bin/nest.js start --watch
+      "
+    networks:
+      appnet:
+        ipv4_address: "${MEGATRON_IP:-172.20.20.175}"
+    ports:
+      - "9000:9000"
+
+networks:
+  appnet:
+    external: true

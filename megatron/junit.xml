@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites name="jest tests" tests="35" failures="0" errors="0" time="3.388">
+  <testsuite name="PostService.transformPostData (isolated, no DB)" errors="0" failures="0" skipped="0" timestamp="2025-10-08T10:38:32" time="2.291" tests="8">
+    <testcase classname="PostService.transformPostData (isolated, no DB) returns null for invalid data: missing data or invalid id" name="PostService.transformPostData (isolated, no DB) returns null for invalid data: missing data or invalid id" time="0.003">
+    </testcase>
+    <testcase classname="PostService.transformPostData (isolated, no DB) transforms with full, mixed-type input (happy path)" name="PostService.transformPostData (isolated, no DB) transforms with full, mixed-type input (happy path)" time="0.003">
+    </testcase>
+    <testcase classname="PostService.transformPostData (isolated, no DB) location hydrate falls back to parsing data.location_ids when repository throws" name="PostService.transformPostData (isolated, no DB) location hydrate falls back to parsing data.location_ids when repository throws" time="0.001">
+    </testcase>
+    <testcase classname="PostService.transformPostData (isolated, no DB) tagIds becomes null when no digits in tag_ids" name="PostService.transformPostData (isolated, no DB) tagIds becomes null when no digits in tag_ids" time="0.001">
+    </testcase>
+    <testcase classname="PostService.transformPostData (isolated, no DB) date/timestamp parsing edge cases" name="PostService.transformPostData (isolated, no DB) date/timestamp parsing edge cases" time="0.001">
+    </testcase>
+    <testcase classname="PostService.transformPostData (isolated, no DB) featured true for 1/true; false otherwise" name="PostService.transformPostData (isolated, no DB) featured true for 1/true; false otherwise" time="0.001">
+    </testcase>
+    <testcase classname="PostService.transformPostData (isolated, no DB) numeric fields default to 0 when missing/invalid" name="PostService.transformPostData (isolated, no DB) numeric fields default to 0 when missing/invalid" time="0.001">
+    </testcase>
+    <testcase classname="PostService.getPostById delegates to postRepository.findPostyId" name="PostService.getPostById delegates to postRepository.findPostyId" time="0.001">
+    </testcase>
+  </testsuite>
+  <testsuite name="TransformCommentsUseCase" errors="0" failures="0" skipped="0" timestamp="2025-10-08T10:38:34" time="0.294" tests="6">
+    <testcase classname="TransformCommentsUseCase sends tombstone on __op=d" name="TransformCommentsUseCase sends tombstone on __op=d" time="0.002">
+    </testcase>
+    <testcase classname="TransformCommentsUseCase sends tombstone when not published (state/status mismatch)" name="TransformCommentsUseCase sends tombstone when not published (state/status mismatch)" time="0">
+    </testcase>
+    <testcase classname="TransformCommentsUseCase upserts when published" name="TransformCommentsUseCase upserts when published" time="0.001">
+    </testcase>
+    <testcase classname="TransformCommentsUseCase calls TransformPostsUseCase when commentable_type=Post" name="TransformCommentsUseCase calls TransformPostsUseCase when commentable_type=Post" time="0.001">
+    </testcase>
+    <testcase classname="TransformCommentsUseCase calls TransformVideosUseCase when commentable_type=Video" name="TransformCommentsUseCase calls TransformVideosUseCase when commentable_type=Video" time="0">
+    </testcase>
+    <testcase classname="TransformCommentsUseCase calls TransformReviewsUseCase when commentable_type=Review" name="TransformCommentsUseCase calls TransformReviewsUseCase when commentable_type=Review" time="0.001">
+    </testcase>
+  </testsuite>
+  <testsuite name="TransformLocationPostUseCase" errors="0" failures="0" skipped="0" timestamp="2025-10-08T10:38:34" time="0.207" tests="6">
+    <testcase classname="TransformLocationPostUseCase ignores snapshot (__op=r)" name="TransformLocationPostUseCase ignores snapshot (__op=r)" time="0.001">
+    </testcase>
+    <testcase classname="TransformLocationPostUseCase does nothing when value is null/undefined" name="TransformLocationPostUseCase does nothing when value is null/undefined" time="0">
+    </testcase>
+    <testcase classname="TransformLocationPostUseCase does nothing when post_id is missing or null" name="TransformLocationPostUseCase does nothing when post_id is missing or null" time="0.001">
+    </testcase>
+    <testcase classname="TransformLocationPostUseCase calls TransformPostsUseCase.execute when post_id is present (op=u)" name="TransformLocationPostUseCase calls TransformPostsUseCase.execute when post_id is present (op=u)" time="0.001">
+    </testcase>
+    <testcase classname="TransformLocationPostUseCase calls TransformPostsUseCase.execute for other ops too (op=c)" name="TransformLocationPostUseCase calls TransformPostsUseCase.execute for other ops too (op=c)" time="0.001">
+    </testcase>
+    <testcase classname="TransformLocationPostUseCase calls TransformPostsUseCase.execute even on delete (op=d)" name="TransformLocationPostUseCase calls TransformPostsUseCase.execute even on delete (op=d)" time="0.001">
+    </testcase>
+  </testsuite>
+  <testsuite name="TransformPostsUseCase" errors="0" failures="0" skipped="0" timestamp="2025-10-08T10:38:34" time="0.179" tests="6">
+    <testcase classname="TransformPostsUseCase ignores snapshot (__op=r)" name="TransformPostsUseCase ignores snapshot (__op=r)" time="0.001">
+    </testcase>
+    <testcase classname="TransformPostsUseCase sends tombstone on delete (__op=d)" name="TransformPostsUseCase sends tombstone on delete (__op=d)" time="0.001">
+    </testcase>
+    <testcase classname="TransformPostsUseCase fetches full row when payload is sparse and upserts" name="TransformPostsUseCase fetches full row when payload is sparse and upserts" time="0.001">
+    </testcase>
+    <testcase classname="TransformPostsUseCase sends tombstone if deleted_at present" name="TransformPostsUseCase sends tombstone if deleted_at present" time="0">
+    </testcase>
+    <testcase classname="TransformPostsUseCase upserts when published and transformed ok" name="TransformPostsUseCase upserts when published and transformed ok" time="0.001">
+    </testcase>
+    <testcase classname="TransformPostsUseCase does not upsert if transform returns null" name="TransformPostsUseCase does not upsert if transform returns null" time="0">
+    </testcase>
+  </testsuite>
+  <testsuite name="CommentService.transformCommentData (isolated, no DB)" errors="0" failures="0" skipped="0" timestamp="2025-10-08T10:38:35" time="0.084" tests="9">
+    <testcase classname="CommentService.transformCommentData (isolated, no DB) returns null for null/undefined input" name="CommentService.transformCommentData (isolated, no DB) returns null for null/undefined input" time="0.001">
+    </testcase>
+    <testcase classname="CommentService.transformCommentData (isolated, no DB) maps base fields and parses numerics/timestamps (happy path)" name="CommentService.transformCommentData (isolated, no DB) maps base fields and parses numerics/timestamps (happy path)" time="0">
+    </testcase>
+    <testcase classname="CommentService.transformCommentData (isolated, no DB) parses createdAt from ISO string and returns null for invalid date" name="CommentService.transformCommentData (isolated, no DB) parses createdAt from ISO string and returns null for invalid date" time="0">
+    </testcase>
+    <testcase classname="CommentService.transformCommentData (isolated, no DB) commentable_type mapping: Video/Review/Dailytrip/Moment/Tour/Travelogue" name="CommentService.transformCommentData (isolated, no DB) commentable_type mapping: Video/Review/Dailytrip/Moment/Tour/Travelogue" time="0.005">
+    </testcase>
+    <testcase classname="CommentService.transformCommentData (isolated, no DB) commentable_type mapping: Travelmemory becomes &quot;travelMemory&quot;" name="CommentService.transformCommentData (isolated, no DB) commentable_type mapping: Travelmemory becomes &quot;travelMemory&quot;" time="0">
+    </testcase>
+    <testcase classname="CommentService.transformCommentData (isolated, no DB) commentable_type missing or empty → commentableType null, all targets null" name="CommentService.transformCommentData (isolated, no DB) commentable_type missing or empty → commentableType null, all targets null" time="0">
+    </testcase>
+    <testcase classname="CommentService.transformCommentData (isolated, no DB) numeric coercion rules: toNum (defaults) and toNumOrNull" name="CommentService.transformCommentData (isolated, no DB) numeric coercion rules: toNum (defaults) and toNumOrNull" time="0">
+    </testcase>
+    <testcase classname="CommentService.transformCommentData (isolated, no DB) keeps user metadata and content nulls if absent" name="CommentService.transformCommentData (isolated, no DB) keeps user metadata and content nulls if absent" time="0.001">
+    </testcase>
+    <testcase classname="CommentService.transformCommentData (isolated, no DB) documents current behavior: non-numeric id yields _id=NaN (not null)" name="CommentService.transformCommentData (isolated, no DB) documents current behavior: non-numeric id yields _id=NaN (not null)" time="0">
+    </testcase>
+  </testsuite>
+</testsuites>

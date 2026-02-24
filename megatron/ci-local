@@ -1,0 +1,13 @@
+docker run --rm -it \
+  -v "$(pwd)":/app -w /app \
+  node:20-bullseye bash -lc '
+    npm ci &&
+    npm i jest-junit --no-save &&
+    mkdir -p reports/junit &&
+    JEST_JUNIT_OUTPUT=reports/junit/junit.xml \
+    npm test -- --runInBand --ci --coverage \
+      --reporters=default --reporters=jest-junit \
+      --coverageReporters=cobertura \
+      --coverageReporters=text-summary &&
+    npm run build
+  '

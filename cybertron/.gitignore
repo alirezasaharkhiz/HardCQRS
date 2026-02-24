@@ -1,0 +1,5 @@
+.idea
+/deploy_logs
+/shutdown_logs
+.env
+mysql/.env
