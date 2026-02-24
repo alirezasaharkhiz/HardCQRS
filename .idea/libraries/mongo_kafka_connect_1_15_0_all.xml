@@ -1,9 +1,0 @@
-<component name="libraryTable">
-  <library name="mongo-kafka-connect-1.15.0-all">
-    <CLASSES>
-      <root url="jar://$PROJECT_DIR$/cybertron/data/kafka-connect/mongodb-sink/mongo-kafka-connect-1.15.0-all.jar!/" />
-    </CLASSES>
-    <JAVADOC />
-    <SOURCES />
-  </library>
-</component>
